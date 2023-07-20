@@ -25,7 +25,7 @@ public class CountryRequestDto {
         @NotBlank
         private String continent;
 
-        private List<StateRequestDto> stateRequestDto;
+        private List<StateForCounRequestDto> stateForCounRequestDtos;
 
         public  CountryEntity serialize(){
                 CountryEntity countryEntity= new  CountryEntity();

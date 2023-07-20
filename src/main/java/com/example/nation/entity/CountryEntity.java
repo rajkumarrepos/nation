@@ -27,6 +27,6 @@ public class CountryEntity {
     @Column(length = 30,nullable = false)
     private String continent;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,mappedBy = "countryEntity")
     private List<StateEntity> stateEntity;
 }

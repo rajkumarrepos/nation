@@ -20,7 +20,7 @@ public class CountryResponseDto {
 
     private String continent;
 
-    private List<StateResponseDto> stateResponseDto;
+    private List<StateGetAndUpResponseDto> stateGetAndUpResponseDtos;
 
     public static CountryResponseDto deserialize(CountryEntity countryEntity) {
         CountryResponseDto countryResponseDto= new CountryResponseDto();

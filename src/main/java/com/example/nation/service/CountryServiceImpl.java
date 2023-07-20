@@ -11,10 +11,7 @@ import com.example.nation.exception.customException.BusinessException;
 import com.example.nation.exception.customException.TechnicalException;
 import com.example.nation.requestDto.CountryRequestDto;
 import com.example.nation.requestDto.CountryUpdateRequestDto;
-import com.example.nation.responseDto.CountryAllRecord;
-import com.example.nation.responseDto.CountryGetAndUpResponseDto;
-import com.example.nation.responseDto.CountryResponseDto;
-import com.example.nation.responseDto.StateResponseDto;
+import com.example.nation.responseDto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -38,27 +35,24 @@ public class CountryServiceImpl implements CountryService {
         Optional<CountryEntity> countryEntityCheck =countryDao.isCodeExists(countryRequestDto.getCountryCode());
         if(countryEntityCheck.isEmpty() || !countryEntityCheck.get().getCountryCode().equals(countryRequestDto.getCountryCode())){
             CountryEntity countryEntity  =countryRequestDto.serialize();
-            try {
-                log.info("-------------"+(countryEntity));
-                countryDao.save(countryEntity);
-
-            }catch (Exception e){
-                throw new TechnicalException(BaseErrorCodes.TECHNICAL_EXCEPTION.message());
-            }
-            CountryResponseDto.deserialize(countryEntity);
-            List<StateResponseDto> stateResponseDtoList = new ArrayList<>();
-           countryRequestDto.getStateRequestDto().stream().forEach(state->{
+            List<StateGetAndUpResponseDto> stateGetAndUpResponseDtos = new ArrayList<>();
+            List<StateEntity> stateEntities=new ArrayList<>();
+           countryRequestDto.getStateForCounRequestDtos().stream().forEach(state->{
                StateEntity stateEntity =state.serialize();
-               try{
-                   stateDao.save(stateEntity);
-               }catch (Exception e){}
-               StateResponseDto stateResponseDto=StateResponseDto.deserialize(stateEntity);
-               stateResponseDtoList.add(stateResponseDto);
-
+               stateEntities.add(stateEntity);
+               StateGetAndUpResponseDto stateGetAndUpResponseDto= StateGetAndUpResponseDto.deserialize(stateEntity);
+               stateGetAndUpResponseDtos.add(stateGetAndUpResponseDto);
 
            });
+           countryEntity.setStateEntity(stateEntities);
+           try{
+              countryDao.save(countryEntity);
+           }catch (Exception e)
+           {
+               throw new BusinessException(BaseErrorCodes.TECHNICAL_EXCEPTION.name(),BaseErrorCodes.TECHNICAL_EXCEPTION.message());
+           }
             CountryResponseDto countryResponseDtoFinal=CountryResponseDto.deserialize(countryEntity);
-            countryResponseDtoFinal.setStateResponseDto(stateResponseDtoList);
+            countryResponseDtoFinal.setStateGetAndUpResponseDtos(stateGetAndUpResponseDtos);
             return countryResponseDtoFinal;
 
         }
@@ -69,15 +63,20 @@ public class CountryServiceImpl implements CountryService {
 
         }
         @Override
-        public List<CountryGetAndUpResponseDto> getAll(){
-        List<CountryEntity> countryEntity=countryDao.getAll();
-        List<CountryGetAndUpResponseDto> countryGetAndUpResponseDtoList = new ArrayList<>();
-        countryEntity.stream().forEach(country ->{
-            CountryGetAndUpResponseDto countryGetAndUpResponseDto=CountryGetAndUpResponseDto.deserialize(country);
-            countryGetAndUpResponseDtoList.add(countryGetAndUpResponseDto);
-        });
-        return countryGetAndUpResponseDtoList;
-
+        public List<CountryAllRecord> getAll() {
+            List<CountryEntity> countryEntity = countryDao.getAll();
+            List<CountryAllRecord> countryAllRecords = new ArrayList<>();
+            countryEntity.stream().forEach(obj -> {
+                CountryAllRecord countryAllRecord = CountryAllRecord.deserialize(obj);
+                List<StateResponseGetDto> stateResponseGetDtos = new ArrayList<>();
+                obj.getStateEntity().stream().forEach(state -> {
+                    StateResponseGetDto stateResponseGetDto = StateResponseGetDto.deserialize(state);
+                    stateResponseGetDtos.add(stateResponseGetDto);
+                });
+                countryAllRecord.setStateResponseGetDtos(stateResponseGetDtos);
+                countryAllRecords.add(countryAllRecord);
+            });
+            return countryAllRecords;
         }
         @Override
         public CountryGetAndUpResponseDto update(String countryCode, CountryUpdateRequestDto countryUpdateRequestDto) throws BusinessException, TechnicalException {
@@ -95,6 +94,7 @@ public class CountryServiceImpl implements CountryService {
             return  CountryGetAndUpResponseDto.deserialize(countryEntity.get());
 
         }else{
+            log.info("<<<<<<<<<<<<<<<<<else>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             throw new BusinessException(BaseErrorCodes.RECORD_NOT_FOUND.name(),BaseErrorCodes.RECORD_NOT_FOUND.message());
         }
 

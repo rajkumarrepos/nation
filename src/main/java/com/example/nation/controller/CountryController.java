@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(name = "api/v1/country")
+@RequestMapping("api/v1/country")
 public class CountryController {
 
     private final CountryService countryService;
@@ -29,7 +29,7 @@ public class CountryController {
     }
 
     @GetMapping(value="/getall")
-    public List<CountryGetAndUpResponseDto> getAll(){
+    public List<CountryAllRecord> getAll(){
         return countryService.getAll();
     }
     @PutMapping(value = "/update")

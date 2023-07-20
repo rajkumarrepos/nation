@@ -32,10 +32,10 @@ public class GlobalException {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleException(BusinessException e) {
 
-        log.error("Business Exception - [{}]", e.getErrorCode(), e);
+        log.error("-----------<<<<>>>>>>>>>>>>>>>-----------------------Business Exception - [{}]", e.getErrorCode(), e);
 
         Response<Object> response = Response.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(e.getErrorCode()).message(getMessage(e.getErrorCode(), e.getErrorParams())).build();
+                .error(e.getErrorCode()).message(e.getMessage()).build();
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -46,7 +46,7 @@ public class GlobalException {
         log.error("Technical Exception - [{}]", e.getErrorCode(), e);
 
         Response<Object> response = Response.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(e.getErrorCode()).message(getMessage(e.getErrorCode(), null)).build();
+                .error(e.getErrorCode()).message(e.getMessage()).build();
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.List;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +31,6 @@ public class StateEntity {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private CountryEntity countryEntity;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private DistrictEntity districtEntity;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,mappedBy = "stateEntity")
+    private List<DistrictEntity> districtEntity;
 }
