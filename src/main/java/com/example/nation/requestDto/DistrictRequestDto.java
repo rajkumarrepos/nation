@@ -18,17 +18,11 @@ public class DistrictRequestDto {
     @NotBlank
     private String districtName;
 
-    public static DistrictRequestDto deserialize(DistrictEntity districtEntity) {
-        return new DistrictRequestDto() {{
-            setDistrictCode(districtEntity.getDistrictCode());
-            setDistrictName(districtEntity.getDistrictName());
-        }};
-    }
     public  DistrictEntity serialize(){
-        return new DistrictEntity(){{
-            setDistrictCode(getDistrictCode());
-            setDistrictName(getDistrictName());
-        }};
+      DistrictEntity districtEntity= new DistrictEntity();
+          districtEntity.setDistrictCode(getDistrictCode());
+          districtEntity.setDistrictName(getDistrictName());
+     return districtEntity;
     }
 
 

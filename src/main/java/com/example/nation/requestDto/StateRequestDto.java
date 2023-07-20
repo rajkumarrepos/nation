@@ -16,17 +16,11 @@ public class StateRequestDto {
     @NotBlank
     private String stateName;
 
-    public static StateRequestDto deserialize(StateEntity stateEntity) {
-        return new StateRequestDto() {{
-            setStateCode(stateEntity.getStateCode());
-            setStateName(stateEntity.getStateName());
-        }};
-    }
         public  StateEntity serialize(){
-            return new StateEntity(){{
-                setStateCode(getStateCode());
-                setStateName(getStateName());
-            }};
+            StateEntity stateEntity= new StateEntity();
+                stateEntity.setStateCode(getStateCode());
+                stateEntity. setStateName(getStateName());
+            return stateEntity;
         }
 
 

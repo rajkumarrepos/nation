@@ -1,8 +1,6 @@
 package com.example.nation.responseDto;
 
 import com.example.nation.entity.CountryEntity;
-import com.example.nation.entity.StateEntity;
-import com.example.nation.requestDto.CountryRequestDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CountryResponseDto {
+public class CountryGetAndUpResponseDto {
 
     private String  countryCode;
 
@@ -20,10 +18,8 @@ public class CountryResponseDto {
 
     private String continent;
 
-    private List<StateResponseDto> stateResponseDto;
-
-    public static CountryResponseDto deserialize(CountryEntity countryEntity) {
-        CountryResponseDto countryResponseDto= new CountryResponseDto();
+    public static CountryGetAndUpResponseDto deserialize(CountryEntity countryEntity) {
+        CountryGetAndUpResponseDto countryResponseDto= new CountryGetAndUpResponseDto();
             countryResponseDto.setCountryCode(countryEntity.getCountryCode());
             countryResponseDto.setCountryName(countryEntity.getCountryName());
             countryResponseDto.setCapital(countryEntity.getCapital());

@@ -11,9 +11,9 @@ public class StateResponseDto {
     private String stateName;
 
     public static StateResponseDto deserialize(StateEntity stateEntity) {
-        return new StateResponseDto() {{
-            setStateCode(stateEntity.getStateCode());
-            setStateName(stateEntity.getStateName());
-        }};
+        StateResponseDto stateResponseDto= new StateResponseDto();
+        stateResponseDto. setStateCode(stateEntity.getStateCode());
+        stateResponseDto. setStateName(stateEntity.getStateName());
+     return stateResponseDto;
     }
 }

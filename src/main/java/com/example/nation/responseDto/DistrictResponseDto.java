@@ -13,9 +13,9 @@ public class DistrictResponseDto {
     private String districtName;
 
     public static DistrictResponseDto deserialize(DistrictEntity districtEntity) {
-        return new DistrictResponseDto() {{
-            setDistrictCode(districtEntity.getDistrictCode());
-            setDistrictName(districtEntity.getDistrictName());
-        }};
+        DistrictResponseDto districtResponseDto= new DistrictResponseDto();
+            districtResponseDto. setDistrictCode(districtEntity.getDistrictCode());
+            districtResponseDto.setDistrictName(districtEntity.getDistrictName());
+        return districtResponseDto;
     }
 }

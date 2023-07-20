@@ -1,9 +1,7 @@
 package com.example.nation.requestDto;
 
 import com.example.nation.entity.CountryEntity;
-import com.example.nation.entity.StateEntity;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,9 +13,8 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class CountryRequestDto {
-        @NotNull
-        private String  countryCode;
+public class CountryUpdateRequestDto {
+
         @NotBlank
         private String countryName;
         @NotBlank
@@ -25,11 +22,8 @@ public class CountryRequestDto {
         @NotBlank
         private String continent;
 
-        private List<StateRequestDto> stateRequestDto;
-
         public  CountryEntity serialize(){
                 CountryEntity countryEntity= new  CountryEntity();
-                        countryEntity.setCountryCode(getCountryCode());
                 countryEntity.setCountryName(getCountryName());
                 countryEntity.setCapital(getCapital());
                 countryEntity.setContinent(getContinent());

@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="country")
