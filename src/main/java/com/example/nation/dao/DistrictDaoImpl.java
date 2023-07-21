@@ -32,7 +32,7 @@ public class DistrictDaoImpl implements DistrictDao {
     }
     @Override
     public void delete(String id){
-        districtRepository.deleteById(id);
+        districtRepository.deleteByDistrictId(id);
     }
 
     @Override

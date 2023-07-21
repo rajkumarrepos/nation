@@ -58,7 +58,7 @@ public class AuthenticationService {
     }
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+  public AuthenticationResponse authenticate(AuthenticationRequest request) throws BusinessException {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
@@ -66,7 +66,7 @@ public class AuthenticationService {
         )
     );
     var user = repository.findByEmail(request.getEmail())
-        .orElseThrow();
+        .orElseThrow(()->new BusinessException(BaseErrorCodes.RECORD_NOT_FOUND.name(),BaseErrorCodes.RECORD_NOT_FOUND.message()));
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     return AuthenticationResponse.builder()
@@ -80,7 +80,7 @@ public class AuthenticationService {
   public void refreshToken(
           HttpServletRequest request,
           HttpServletResponse response
-  ) throws IOException {
+  ) throws IOException, BusinessException {
     final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     final String refreshToken;
     final String userEmail;
@@ -91,7 +91,7 @@ public class AuthenticationService {
     userEmail = jwtService.extractUsername(refreshToken);
     if (userEmail != null) {
       var user = this.repository.findByEmail(userEmail)
-              .orElseThrow();
+              .orElseThrow(()->new BusinessException(BaseErrorCodes.RECORD_NOT_FOUND.name(),BaseErrorCodes.RECORD_NOT_FOUND.message()));
       if (jwtService.isTokenValid(refreshToken, user)) {
         var accessToken = jwtService.generateToken(user);
         var authResponse = AuthenticationResponse.builder()

@@ -17,4 +17,7 @@ public interface DistrictRepository extends JpaRepository<DistrictEntity,String>
     @Modifying
     @Query("delete from DistrictEntity t where t.stateEntity.id in (?1)")
     void deleteAllByStateEntityIdIn(List<String> id);
+    @Modifying
+    @Query("delete from DistrictEntity t where t.id = ?1")
+    void deleteByDistrictId(String id);
 }

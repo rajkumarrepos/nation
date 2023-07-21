@@ -3,6 +3,7 @@ package com.example.nation.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class CountryEntity {
     private String capital;
     @Column(length = 30,nullable = false)
     private String continent;
+
     @JsonManagedReference("countryEntity")
     @OneToMany(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER,mappedBy = "countryEntity")
     private List<StateEntity> stateEntity;

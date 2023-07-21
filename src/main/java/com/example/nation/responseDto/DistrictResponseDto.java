@@ -5,9 +5,11 @@ import com.example.nation.entity.DistrictEntity;
 import com.example.nation.requestDto.DistrictRequestDto;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class DistrictResponseDto {
     private Integer districtCode;
     private String districtName;

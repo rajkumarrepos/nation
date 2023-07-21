@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface CountryRepository extends JpaRepository<CountryEntity,String> {
+    @Query(value = "SELECT * FROM country WHERE country_code=:countryCode",nativeQuery = true )
     Optional<CountryEntity> findByCountryCode(String countryCode);
 
     @Modifying

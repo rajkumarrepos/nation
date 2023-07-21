@@ -40,10 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
-    if (request.getServletPath().contains("/api/v1/auth")) {
-      filterChain.doFilter(request, response);
-      return;
-    }
+//    if (request.getServletPath().contains("/api/v1/auth")) {
+//      filterChain.doFilter(request, response);
+//      return;
+//    }
     if(request.getServletPath().contains("/swagger-ui/")) {
       filterChain.doFilter(request, response);
       return;
@@ -87,7 +87,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             new WebAuthenticationDetailsSource().buildDetails(request)
         );
         SecurityContextHolder.getContext().setAuthentication(authToken);
+        filterChain.doFilter(request, response);
+        return;
+      }else{
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        final Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+        body.put("error", "Unauthorized");
+        body.put("message", "token expired");
+        body.put("path", request.getServletPath());
+        new ObjectMapper().writeValue(response.getOutputStream(),body);
+        return;
+
       }
+
     }
      filterChain.doFilter(request, response);
   }

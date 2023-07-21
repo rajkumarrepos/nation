@@ -1,15 +1,16 @@
 package com.example.nation.responseDto;
 import com.example.nation.entity.StateEntity;
-import com.example.nation.requestDto.StateRequestDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StateResponseDto {
     private Integer stateCode;

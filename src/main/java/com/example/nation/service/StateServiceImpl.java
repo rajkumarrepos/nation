@@ -7,6 +7,7 @@ import com.example.nation.entity.CountryEntity;
 import com.example.nation.entity.DistrictEntity;
 import com.example.nation.entity.StateEntity;
 import com.example.nation.exception.customException.BaseErrorCodes;
+import com.example.nation.exception.customException.BaseException;
 import com.example.nation.exception.customException.BusinessException;
 import com.example.nation.repository.StateRepository;
 import com.example.nation.requestDto.StateRequestDto;
@@ -14,7 +15,9 @@ import com.example.nation.requestDto.StateUpdateRequestDto;
 import com.example.nation.responseDto.StateGetAndUpResponseDto;
 import com.example.nation.responseDto.StateResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Modifying;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,29 +25,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class StateServiceImpl implements StateService {
     private final StateDao stateDao;
     private final DistrictDao districtDao;
     private final CountryDao countryDao;
+    private final StateRepository stateRepository;
 
     @Override
     public StateResponseDto register(String countryCode, StateRequestDto stateRequestDto) throws BusinessException {
         Optional<StateEntity> stateEntity = stateDao.isStateCodeExists(stateRequestDto.getStateCode());
+        log.info("-----------------{}------------------------",stateEntity.get());
         if (stateEntity.isEmpty() || !stateEntity.get().getStateCode().equals(stateRequestDto.getStateCode())) {
             StateEntity stateEntityFinal = stateRequestDto.serialize();
             Optional<CountryEntity> countryEntity = countryDao.isCodeExists(countryCode);
+            log.info("-----------------{}------------------------",countryEntity.get());
             if (countryEntity.isPresent()) {
                 stateEntityFinal.setCountryEntity(countryEntity.get());
             } else {
                 throw new BusinessException(BaseErrorCodes.RECORD_NOT_FOUND.name(), BaseErrorCodes.RECORD_NOT_FOUND.message());
             }
             List<DistrictEntity> districtEntityList = new ArrayList<>();
-
-            // stateEntityFinal.setDistrictEntity(districtEntityList);
             try {
+                log.info("-----------------{}------------------------",stateEntityFinal);
                 stateDao.save(stateEntityFinal);
                 stateRequestDto.getDistrictRequestDtos().forEach(districtRequestDto -> {
                     DistrictEntity districtEntity = districtRequestDto.serialize();
@@ -65,9 +70,11 @@ public class StateServiceImpl implements StateService {
     @Override
     public StateGetAndUpResponseDto update(Integer stateCode, StateUpdateRequestDto stateUpdateRequestDto) throws BusinessException {
         Optional<StateEntity> stateEntity = stateDao.isStateCodeExists(stateCode);
+        log.info("-----------------{}------------------------",stateEntity.get());
         if (stateEntity.isPresent()) {
             stateEntity.get().setStateName(stateUpdateRequestDto.getStateName());
             try {
+                log.info("-----------------{}------------------------",stateEntity.get());
                 stateDao.save(stateEntity.get());
             } catch (Exception e) {
                 throw new BusinessException(BaseErrorCodes.TECHNICAL_EXCEPTION.name(), BaseErrorCodes.TECHNICAL_EXCEPTION.message());
@@ -80,8 +87,8 @@ public class StateServiceImpl implements StateService {
     }
 
     @Override
-    public List<StateResponseDto> getAll() {
-        List<StateEntity> stateEntities = stateDao.getAll();
+    public List<StateResponseDto> getAll(Pageable pageable) {
+        Page<StateEntity> stateEntities = stateDao.getAll(pageable);
         List<StateResponseDto> stateResponseDtos = new ArrayList<>();
         stateEntities.stream().forEach(obj -> {
             StateResponseDto stateResponseDto = StateResponseDto.deserialize(obj);
@@ -93,22 +100,26 @@ public class StateServiceImpl implements StateService {
     @Override
     @Transactional
     public String deleteByCountryId(String id) {
+        log.info("-----------------{}------------------------",id);
         districtDao.deleteByStateId(stateDao.getAllStateIdByCountryId(id));
         return stateDao.deleteByCountryId(id);
     }
 
     @Override
     @Transactional
-    public String deleteById(Integer id) {
+    public String delete(Integer stateCode) throws BusinessException {
 
-        Optional<StateEntity> entity = stateDao.isStateCodeExists(id);
-       /* if(entity.isEmpty())
-            throw new RuntimeException(BaseErrorCodes.RECORD_NOT_FOUND.message());
-*/
-        String ids =  entity.get().getId();
-        districtDao.deleteByStateId(Collections.singletonList(ids));
-        stateRepository.deleteAllByStateCode(id);
+        Optional<StateEntity> stateEntity = stateDao.isStateCodeExists(stateCode);
+        log.info("-----------------{}------------------------",stateEntity.get());
+       if(stateEntity.isEmpty()){
+        String id =  stateEntity.get().getId();
+        districtDao.deleteByStateId(Collections.singletonList(id));
+        stateRepository.deleteAllByStateCode(stateCode);
         return "success";
     }
-    private final StateRepository stateRepository;
+       else{
+           throw new BusinessException(BaseErrorCodes.RECORD_NOT_FOUND.name(),BaseErrorCodes.RECORD_NOT_FOUND.message());
+           }
+       }
+
 }

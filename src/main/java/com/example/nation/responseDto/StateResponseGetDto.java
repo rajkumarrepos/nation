@@ -2,12 +2,14 @@ package com.example.nation.responseDto;
 import com.example.nation.entity.StateEntity;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class StateResponseGetDto {
     private Integer stateCode;
     private String stateName;

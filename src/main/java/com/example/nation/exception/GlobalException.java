@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -37,7 +39,7 @@ public class GlobalException {
         Response<Object> response = Response.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error(e.getErrorCode()).message(e.getMessage()).build();
 
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @ExceptionHandler(TechnicalException.class)
@@ -48,17 +50,33 @@ public class GlobalException {
         Response<Object> response = Response.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error(e.getErrorCode()).message(e.getMessage()).build();
 
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleException(AccessDeniedException e) {
+
+        Response<Object> response = Response.builder().status(HttpStatus.FORBIDDEN.value())
+                .error("AccessDenied").message("your are unauthorized to access this api").build();
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleException(BadCredentialsException e) {
+
+        Response<Object> response = Response.builder().status(HttpStatus.FORBIDDEN.value())
+                .error("BadCredential").message("your username or password wrong").build();
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception e) {
 
-        log.error("General Exception", e);
+        log.error("General Exception");
 
         Response<Object> response = Response.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error(BaseErrorCodes.GENERAL_EXCEPTION.name())
-                .message(getMessage(BaseErrorCodes.GENERAL_EXCEPTION.name(), null)).build();
+                .message("error").build();
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -66,7 +84,7 @@ public class GlobalException {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<Object> handleValidationException(MissingServletRequestParameterException e) {
 
-        log.error("Validation Exception", e);
+        log.error("Validation Exception");
 
         List<ResponseError> responseErrors = new ArrayList<>();
         ResponseError responseError = ResponseError.builder().field(e.getParameterName())

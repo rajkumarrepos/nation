@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ public class AuthenticationController {
   private AuthenticationService service;
 
   @PostMapping("/register")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<AuthenticationResponse> register (
       @RequestBody RegisterRequest request
   ) throws BusinessException {
@@ -29,7 +31,7 @@ public class AuthenticationController {
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request
-  ) {
+  ) throws BusinessException {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
@@ -37,7 +39,7 @@ public class AuthenticationController {
   public void refreshToken(
       HttpServletRequest request,
       HttpServletResponse response
-  ) throws IOException {
+  ) throws IOException, BusinessException {
     service.refreshToken(request, response);
   }
 

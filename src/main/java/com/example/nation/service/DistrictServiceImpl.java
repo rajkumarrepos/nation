@@ -12,12 +12,14 @@ import com.example.nation.responseDto.DistrictGetAndUpResponseDto;
 import com.example.nation.responseDto.DistrictResponseDto;
 import com.example.nation.responseDto.StateForDistrictResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class DistrictServiceImpl implements DistrictService{
@@ -26,6 +28,7 @@ public class DistrictServiceImpl implements DistrictService{
     @Override
     public DistrictGetAndUpResponseDto register(Integer stateCode, List<DistrictRequestDto> districtRequestDto) throws BusinessException {
     Optional<StateEntity> stateEntity =stateDao.isStateCodeExists(stateCode);
+        log.info("-----------------{}------------------------",stateEntity.get());
     List<DistrictResponseDto> districtResponseDtos=new ArrayList<>();
     if(stateEntity.isPresent()){
         districtRequestDto.stream().forEach(district->{
@@ -33,6 +36,7 @@ public class DistrictServiceImpl implements DistrictService{
                DistrictEntity districtEntity = district.serialize();
                districtEntity.setStateEntity(stateEntity.get());
                districtDao.save(districtEntity);
+               log.debug("-----------------{}------------------------",districtEntity);
                districtResponseDtos.add(DistrictResponseDto.deserialize(districtEntity));
            }else{
                try {
@@ -55,6 +59,7 @@ public class DistrictServiceImpl implements DistrictService{
     @Override
     public DistrictResponseDto update(Integer districtCode, DistrictUpdateRequestDto districtUpdateRequestDto) throws BusinessException {
         Optional<DistrictEntity> districtEntity=districtDao.isExistsCode(districtCode);
+        log.info("-----------------{}------------------------",districtEntity.get());
         if(districtEntity.isPresent()){
             districtEntity.get().setDistrictName(districtUpdateRequestDto.getDistrictName());
             districtDao.save(districtEntity.get());
@@ -76,10 +81,11 @@ public class DistrictServiceImpl implements DistrictService{
 
     }
     @Override
+    @Transactional
     public String delete(Integer districtCode) throws BusinessException {
        Optional<DistrictEntity> districtEntity = districtDao.isExistsCode(districtCode);
+        log.info("-----------------{}------------------------",districtEntity.get());
        if(districtEntity.isPresent()){
-           //districtEntity.get().getStateEntity().getDistrictEntity().remove(districtEntity);
            districtDao.delete(districtEntity.get().getId());
            return "deleted successfully";
        }else{
