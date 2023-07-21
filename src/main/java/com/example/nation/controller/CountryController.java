@@ -12,6 +12,8 @@ import com.example.nation.service.CountryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +37,10 @@ public class CountryController {
     @PutMapping(value = "/update")
     public CountryGetAndUpResponseDto update(@RequestParam String countryCode,@Valid @RequestBody CountryUpdateRequestDto countryUpdateRequestDto) throws BusinessException, TechnicalException {
         return countryService.update(countryCode,countryUpdateRequestDto);
+    }
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<?> delete(@RequestParam String countryCode) throws BusinessException {
+        String message=countryService.delete(countryCode);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }

@@ -1,6 +1,9 @@
 package com.example.nation.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,10 +30,11 @@ public class StateEntity {
     @Column(length=30,nullable = false,unique = true)
     private String stateName;
 
-    @JsonIgnore
+    @JsonBackReference("countryEntity")
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private CountryEntity countryEntity;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,mappedBy = "stateEntity")
+    @JsonManagedReference("stateEntity")
+    @OneToMany(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER,mappedBy = "stateEntity")
     private List<DistrictEntity> districtEntity;
 }

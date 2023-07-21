@@ -12,4 +12,8 @@ public interface StateService {
     StateResponseDto register(String countryCode, StateRequestDto stateRequestDto) throws BusinessException;
     StateGetAndUpResponseDto update(Integer stateCode, StateUpdateRequestDto stateUpdateRequestDto) throws BusinessException;
     List<StateResponseDto> getAll();
+
+    String deleteByCountryId(String id);
+
+    String deleteById(Integer id);
 }

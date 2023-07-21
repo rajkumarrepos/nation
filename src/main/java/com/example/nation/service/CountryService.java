@@ -15,4 +15,5 @@ public interface CountryService {
     CountryResponseDto register(CountryRequestDto countryRequestDto) throws BusinessException, TechnicalException;
     List<CountryAllRecord>  getAll();
     CountryGetAndUpResponseDto update(String countryCode, CountryUpdateRequestDto countryUpdateRequestDto) throws BusinessException, TechnicalException;
+    String delete(String countryCode) throws BusinessException;
 }

@@ -16,6 +16,12 @@ public class DistrictDaoImpl implements DistrictDao {
     public void save(DistrictEntity districtEntity){
         districtRepository.save(districtEntity);
     }
+
+    @Override
+    public void saveAll(List<DistrictEntity> districtEntity) {
+        districtRepository.saveAll(districtEntity);
+    }
+
     @Override
     public Optional<DistrictEntity> isExistsCode(Integer districtCode){
         return districtRepository.findByDistrictCode(districtCode);
@@ -27,5 +33,11 @@ public class DistrictDaoImpl implements DistrictDao {
     @Override
     public void delete(String id){
         districtRepository.deleteById(id);
+    }
+
+    @Override
+    public String deleteByStateId(List<String> id) {
+        districtRepository.deleteAllByStateEntityIdIn(id);
+        return " ";
     }
 }

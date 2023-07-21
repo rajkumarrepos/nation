@@ -1,6 +1,8 @@
 package com.example.nation.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +26,8 @@ public class DistrictEntity {
     @Column(length=30,nullable = false,unique = true)
     private String districtName;
 
-    @JsonIgnore
+
+    @JsonBackReference("stateEntity")
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private StateEntity stateEntity;
 

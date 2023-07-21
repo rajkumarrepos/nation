@@ -20,10 +20,15 @@ public class CountryDaoImpl implements CountryDao {
     }
     @Override
     public void save(CountryEntity countryEntity){
-        countryRepository.save(countryEntity);
+        countryEntity.setId( countryRepository.save(countryEntity).getId());
     }
     @Override
     public List<CountryEntity> getAll(){
        return countryRepository.findAll();
+    }
+
+    @Override
+    public void delete(String id) {
+        countryRepository.deleteAllById(id);
     }
 }

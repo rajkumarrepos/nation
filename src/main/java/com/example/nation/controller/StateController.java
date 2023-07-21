@@ -10,6 +10,8 @@ import com.example.nation.service.StateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,5 +34,11 @@ public class StateController {
     @GetMapping(value ="getall")
     public List<StateResponseDto> getAll(){
         return stateService.getAll();
+    }
+
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<String> delete(@RequestParam Integer stateCode) throws BusinessException {
+        String message=stateService.deleteById(stateCode);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }

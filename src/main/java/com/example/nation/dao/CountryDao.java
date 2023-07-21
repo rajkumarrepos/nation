@@ -9,4 +9,6 @@ public interface CountryDao {
     Optional<CountryEntity> isCodeExists(String countryCode);
     void save(CountryEntity countryEntity);
     List<CountryEntity> getAll();
+
+    void delete(String id);
 }

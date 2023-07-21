@@ -79,7 +79,7 @@ public class DistrictServiceImpl implements DistrictService{
     public String delete(Integer districtCode) throws BusinessException {
        Optional<DistrictEntity> districtEntity = districtDao.isExistsCode(districtCode);
        if(districtEntity.isPresent()){
-           districtEntity.get().getStateEntity().getDistrictEntity().remove(districtEntity);
+           //districtEntity.get().getStateEntity().getDistrictEntity().remove(districtEntity);
            districtDao.delete(districtEntity.get().getId());
            return "deleted successfully";
        }else{

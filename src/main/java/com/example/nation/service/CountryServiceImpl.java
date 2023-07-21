@@ -1,8 +1,10 @@
 package com.example.nation.service;
 
 import com.example.nation.dao.CountryDao;
+import com.example.nation.dao.DistrictDao;
 import com.example.nation.dao.StateDao;
 import com.example.nation.entity.CountryEntity;
+import com.example.nation.entity.DistrictEntity;
 import com.example.nation.entity.StateEntity;
 import com.example.nation.exception.customException.BaseErrorCodes;
 import com.example.nation.exception.customException.BusinessException;
@@ -15,6 +17,7 @@ import com.example.nation.responseDto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public class CountryServiceImpl implements CountryService {
 
     private final CountryDao countryDao;
     private final StateDao stateDao;
+    private final StateService service;
 
     @Override
     public CountryResponseDto register(CountryRequestDto countryRequestDto) throws BusinessException, TechnicalException {
@@ -36,17 +40,27 @@ public class CountryServiceImpl implements CountryService {
         if(countryEntityCheck.isEmpty() || !countryEntityCheck.get().getCountryCode().equals(countryRequestDto.getCountryCode())){
             CountryEntity countryEntity  =countryRequestDto.serialize();
             List<StateGetAndUpResponseDto> stateGetAndUpResponseDtos = new ArrayList<>();
-            List<StateEntity> stateEntities=new ArrayList<>();
-           countryRequestDto.getStateForCounRequestDtos().stream().forEach(state->{
-               StateEntity stateEntity =state.serialize();
-               stateEntities.add(stateEntity);
-               StateGetAndUpResponseDto stateGetAndUpResponseDto= StateGetAndUpResponseDto.deserialize(stateEntity);
-               stateGetAndUpResponseDtos.add(stateGetAndUpResponseDto);
-
-           });
-           countryEntity.setStateEntity(stateEntities);
+//            List<StateEntity> stateEntities=new ArrayList<>();
+//           countryRequestDto.getStateForCounRequestDtos().stream().forEach(state->{
+//               StateEntity stateEntity =state.serialize();
+//               stateEntities.add(stateEntity);
+//               StateGetAndUpResponseDto stateGetAndUpResponseDto= StateGetAndUpResponseDto.deserialize(stateEntity);
+//               stateGetAndUpResponseDtos.add(stateGetAndUpResponseDto);
+//
+//           });
+//           countryEntity.setStateEntity(stateEntities);
            try{
               countryDao.save(countryEntity);
+               List<StateEntity> stateEntities=new ArrayList<>();
+               countryRequestDto.getStateForCounRequestDtos().stream().forEach(state->{
+                   StateEntity stateEntity =state.serialize();
+                   stateEntity.setCountryEntity(countryEntity);
+                   stateDao.save(stateEntity);
+                   stateEntities.add(stateEntity);
+                   StateGetAndUpResponseDto stateGetAndUpResponseDto= StateGetAndUpResponseDto.deserialize(stateEntity);
+                   stateGetAndUpResponseDtos.add(stateGetAndUpResponseDto);
+               });
+
            }catch (Exception e)
            {
                throw new BusinessException(BaseErrorCodes.TECHNICAL_EXCEPTION.name(),BaseErrorCodes.TECHNICAL_EXCEPTION.message());
@@ -99,6 +113,20 @@ public class CountryServiceImpl implements CountryService {
         }
 
         }
+    @Override
+    @Transactional
+    public String delete(String countryCode) throws BusinessException {
+        Optional<CountryEntity> countryEntity = countryDao.isCodeExists(countryCode);
+        if(countryEntity.isPresent()){
+          //  countryEntity.get().getStateEntity().getDistrictEntity().remove(districtEntity);
+
+            service.deleteByCountryId(countryEntity.get().getId());
+            countryDao.delete(countryEntity.get().getId());
+            return "deleted successfully";
+        }else{
+            throw new BusinessException(BaseErrorCodes.RECORD_NOT_FOUND.name(),BaseErrorCodes.RECORD_NOT_FOUND.message());
+        }
+    }
 
     }
 

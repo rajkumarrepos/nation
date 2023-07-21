@@ -3,6 +3,7 @@ package com.example.nation.responseDto;
 import com.example.nation.entity.CountryEntity;
 import com.example.nation.entity.StateEntity;
 import com.example.nation.requestDto.CountryRequestDto;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CountryResponseDto {
 
     private String  countryCode;
