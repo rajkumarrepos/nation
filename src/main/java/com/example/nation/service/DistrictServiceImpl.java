@@ -28,7 +28,6 @@ public class DistrictServiceImpl implements DistrictService{
     @Override
     public DistrictGetAndUpResponseDto register(Integer stateCode, List<DistrictRequestDto> districtRequestDto) throws BusinessException {
     Optional<StateEntity> stateEntity =stateDao.isStateCodeExists(stateCode);
-        log.info("-----------------{}------------------------",stateEntity.get());
     List<DistrictResponseDto> districtResponseDtos=new ArrayList<>();
     if(stateEntity.isPresent()){
         districtRequestDto.stream().forEach(district->{
@@ -59,7 +58,6 @@ public class DistrictServiceImpl implements DistrictService{
     @Override
     public DistrictResponseDto update(Integer districtCode, DistrictUpdateRequestDto districtUpdateRequestDto) throws BusinessException {
         Optional<DistrictEntity> districtEntity=districtDao.isExistsCode(districtCode);
-        log.info("-----------------{}------------------------",districtEntity.get());
         if(districtEntity.isPresent()){
             districtEntity.get().setDistrictName(districtUpdateRequestDto.getDistrictName());
             districtDao.save(districtEntity.get());
@@ -84,7 +82,6 @@ public class DistrictServiceImpl implements DistrictService{
     @Transactional
     public String delete(Integer districtCode) throws BusinessException {
        Optional<DistrictEntity> districtEntity = districtDao.isExistsCode(districtCode);
-        log.info("-----------------{}------------------------",districtEntity.get());
        if(districtEntity.isPresent()){
            districtDao.delete(districtEntity.get().getId());
            return "deleted successfully";

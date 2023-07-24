@@ -1,14 +1,14 @@
 <!--<ehcache> xmlns="http://www.ehcache.org/v3"-->
-<!--         updateCheck="false">-->
+<!--         updateCheck="true">-->
 
 <!--    <cache alias="getAllList"-->
 <!--           uses-template="myTemplate"-->
-<!--           timeToLiveSeconds="300">-->
+<!--           timeToLiveSeconds="3">-->
 <!--    </cache>-->
 
 <!--    <cache-template name="myTemplate">-->
 <!--        <expiry>-->
-<!--            <ttl unit="seconds">500</ttl>-->
+<!--            <ttl unit="seconds">3</ttl>-->
 <!--        </expiry>-->
 <!--        <heap unit="entries">1000</heap>-->
 <!--    </cache-template>-->

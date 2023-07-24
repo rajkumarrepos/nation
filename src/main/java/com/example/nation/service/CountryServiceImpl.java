@@ -38,7 +38,6 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public CountryResponseDto register(CountryRequestDto countryRequestDto) throws BusinessException, TechnicalException {
         Optional<CountryEntity> countryEntityCheck =countryDao.isCodeExists(countryRequestDto.getCountryCode());
-//        log.info("-----------------{}------------------------",countryEntityCheck.get());
         if(countryEntityCheck.isEmpty() || !countryEntityCheck.get().getCountryCode().equals(countryRequestDto.getCountryCode())){
             CountryEntity countryEntity  =countryRequestDto.serialize();
             List<StateGetAndUpResponseDto> stateGetAndUpResponseDtos = new ArrayList<>();
@@ -81,7 +80,7 @@ public class CountryServiceImpl implements CountryService {
                 List<StateResponseGetDto> stateResponseGetDtos = new ArrayList<>();
                 obj.getStateEntity().stream().forEach(state -> {
                     StateResponseGetDto stateResponseGetDto = StateResponseGetDto.deserialize(state);
-                    log.debug("-----------------{}------------------------",stateResponseGetDto);
+                    log.info("-----------------{}------------------------",stateResponseGetDto);
                     stateResponseGetDtos.add(stateResponseGetDto);
                 });
                 countryAllRecord.setStateResponseGetDtos(stateResponseGetDtos);
@@ -92,13 +91,11 @@ public class CountryServiceImpl implements CountryService {
         @Override
         public CountryGetAndUpResponseDto update(String countryCode, CountryUpdateRequestDto countryUpdateRequestDto) throws BusinessException, TechnicalException {
         Optional<CountryEntity> countryEntity=countryDao.isCodeExists(countryCode);
-            log.info("-----------------{}------------------------",countryEntity.get());
         if(countryEntity.isPresent()){
                         countryEntity.get().setCountryName(countryUpdateRequestDto.getCountryName());
                         countryEntity.get().setCapital(countryUpdateRequestDto.getCapital());
                         countryEntity.get().setContinent(countryUpdateRequestDto.getContinent());
             try {
-                log.info("-----------------{}------------------------",countryEntity.get());
                 countryDao.save(countryEntity.get());
             }catch (Exception e) {
                 throw new TechnicalException(BaseErrorCodes.TECHNICAL_EXCEPTION.name(),BaseErrorCodes.TECHNICAL_EXCEPTION.message());
@@ -115,7 +112,6 @@ public class CountryServiceImpl implements CountryService {
     @Transactional
     public String delete(String countryCode) throws BusinessException {
         Optional<CountryEntity> countryEntity = countryDao.isCodeExists(countryCode);
-        log.info("-----------------{}------------------------",countryEntity.get());
         if(countryEntity.isPresent()){
             stateService.deleteByCountryId(countryEntity.get().getId());
             countryDao.delete(countryEntity.get().getId());

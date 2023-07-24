@@ -37,11 +37,9 @@ public class StateServiceImpl implements StateService {
     @Override
     public StateResponseDto register(String countryCode, StateRequestDto stateRequestDto) throws BusinessException {
         Optional<StateEntity> stateEntity = stateDao.isStateCodeExists(stateRequestDto.getStateCode());
-        log.info("-----------------{}------------------------",stateEntity.get());
         if (stateEntity.isEmpty() || !stateEntity.get().getStateCode().equals(stateRequestDto.getStateCode())) {
             StateEntity stateEntityFinal = stateRequestDto.serialize();
             Optional<CountryEntity> countryEntity = countryDao.isCodeExists(countryCode);
-            log.info("-----------------{}------------------------",countryEntity.get());
             if (countryEntity.isPresent()) {
                 stateEntityFinal.setCountryEntity(countryEntity.get());
             } else {
@@ -70,11 +68,9 @@ public class StateServiceImpl implements StateService {
     @Override
     public StateGetAndUpResponseDto update(Integer stateCode, StateUpdateRequestDto stateUpdateRequestDto) throws BusinessException {
         Optional<StateEntity> stateEntity = stateDao.isStateCodeExists(stateCode);
-        log.info("-----------------{}------------------------",stateEntity.get());
         if (stateEntity.isPresent()) {
             stateEntity.get().setStateName(stateUpdateRequestDto.getStateName());
             try {
-                log.info("-----------------{}------------------------",stateEntity.get());
                 stateDao.save(stateEntity.get());
             } catch (Exception e) {
                 throw new BusinessException(BaseErrorCodes.TECHNICAL_EXCEPTION.name(), BaseErrorCodes.TECHNICAL_EXCEPTION.message());
@@ -110,7 +106,6 @@ public class StateServiceImpl implements StateService {
     public String delete(Integer stateCode) throws BusinessException {
 
         Optional<StateEntity> stateEntity = stateDao.isStateCodeExists(stateCode);
-        log.info("-----------------{}------------------------",stateEntity.get());
        if(stateEntity.isEmpty()){
         String id =  stateEntity.get().getId();
         districtDao.deleteByStateId(Collections.singletonList(id));
